@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useCallback, useEffect,useState } from 'react';
 import styles from './app.module.css';
 import SearchHeader from './component/search_header/search_header';
 import VideoDetail from './component/video_detail/video_detail';
@@ -7,15 +7,13 @@ import VideoList from './component/video_list/video_list';
 function App({youtube}) {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const search = query => {
-    
+  
+  const search = useCallback(query => {
+    setSelectedVideo(null);
     youtube
     .search(query)
-    .then(videos => {
-      setVideos(videos);
-      setSelectedVideo(null);
-      });
-  };
+    .then(videos => setVideos(videos));
+  }, [youtube]);
 
   const selectVideo = (video) => {
     setSelectedVideo(video);
@@ -25,7 +23,7 @@ function App({youtube}) {
     youtube
       .mostPopular()
       .then(videos => setVideos(videos));
-  }, []);
+  }, [youtube]);
   /* 
     [] 빈칸이면 한번만 업데이트, 
     아무것도 전달하지 않으면 컴포넌트의 state나 prop이 
